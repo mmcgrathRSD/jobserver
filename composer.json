@@ -1,0 +1,55 @@
+{
+    "name": "popcorn/jobserver",
+    "description": "New jobserver that uses beanstalkd",
+    "homepage": "https://github.com/mmcgrathRSD/jobserver",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael McGrath",
+            "email": "mike.mcgrath@rallysportdirect.com"
+        },
+        {
+            "name": "Christopher West",
+            "email": "christopher.west@rallysportdirect.com"
+        },
+        {
+            "name": "Kiley Holman",
+            "email": "kiley.holman@rallysportdirect.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "laravel-zero/framework": "^6.0",
+        "popcorn/beans": "^1.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "@php application app:rename"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "bin": [
+        "jobserver"
+    ]
+}
