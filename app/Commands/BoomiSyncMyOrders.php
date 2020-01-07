@@ -14,7 +14,7 @@ class BoomiSyncMyOrders extends Command
      *
      * @var string
      */
-    protected $batch;
+    protected $batch = 'test';
 
     /**
      * The signature of the command.
@@ -28,7 +28,7 @@ class BoomiSyncMyOrders extends Command
      *
      * @var string
      */
-    protected $description = 'Accepts a user id, and will sync orders for a specific customer';
+    protected $description = 'Optionally accepts a batch string to proccess jobs for a specific batch';
 
     /**
      * Execute the console command.
@@ -40,8 +40,20 @@ class BoomiSyncMyOrders extends Command
         // $this->warn("User Id Is: {$userId}");
         $tasks = $queueTaskService->queueTask->find(['batch' => $this->batch]);
 
+
         foreach ($tasks as $task) {
-            $queueTaskService->producer->useTube('myTube')->put($task);
+
+            //Create a task for each parameter sent
+            foreach ($task->parameters as $parameter) {
+                $queueTask = [
+                    'title' => $task->title,
+                    'sales_channel' => $task->sales_channel,
+                    'user_id' => $parameter,
+                    'created' => $task->created,
+                ];
+
+                $queueTaskService->producer->useTube('myTube')->put(new Payload($queueTask));
+            }
         }
     }
     /**

@@ -36,8 +36,6 @@ class BeanstalkWork extends Command
             //Check to see if the current jobs is set, and has a value
             if ($worker->consumer->countJobs($tube) >= 1) {
                 $job = $worker->consumer->watchTube($tube)->reserve();
-
-                echo "JobID: {$job->id} \n";
                 echo "Job Payload \n";
                 echo json_encode($job->payload);
                 echo "\n";
