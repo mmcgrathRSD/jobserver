@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use Popcorn\Beans\Models\QueueTask;
-
 class QueueTaskService
 {
     public $queueTask;

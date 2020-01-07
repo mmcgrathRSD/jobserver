@@ -53,9 +53,11 @@ class AppServiceProvider extends ServiceProvider
     public function registerBeanstalkWorkerService()
     {
         $this->app->bind(BeanStalkWorkerService::class, function () {
-            return new BeanStalkWorkerService(new Consumer(
-                new Connection('127.0.0.1', 11300, 2, true)
-            ));
+            return new BeanStalkWorkerService(
+                new Consumer(
+                    new Connection('127.0.0.1', 11300, 2, true)
+                )
+            );
         });
     }
 }
