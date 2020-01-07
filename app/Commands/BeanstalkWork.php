@@ -2,9 +2,11 @@
 
 namespace App\Commands;
 
+use ReflectionClass;
 use App\Services\BeanStalkWorkerService;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
+use ReflectionMethod;
 
 class BeanstalkWork extends Command
 {
@@ -36,10 +38,31 @@ class BeanstalkWork extends Command
             //Check to see if the current jobs is set, and has a value
             if ($worker->consumer->countJobs($tube) >= 1) {
                 $job = $worker->consumer->watchTube($tube)->reserve();
-                echo "Job Payload \n";
-                echo json_encode($job->payload);
-                echo "\n";
-                echo "Deleting Job.. \n";
+
+                $this->info("Starting Job {$job->id}, Job is: {$job->payload['title']}, UserID: {$job->payload['user_id']}");
+
+                //Split the queue task title into class and method
+                $makeFunctionAndMethod = explode("::", $job->payload['title']);
+
+                $class = "App{$makeFunctionAndMethod[0]}";
+                $taskClassMethod = new ReflectionMethod(new $class, $makeFunctionAndMethod[1]);
+                $taskClassMethod->invokeArgs(new $class, [$job->payload['user_id']]);
+
+                // call_user_func_array(
+                //     [
+                //         "App{$makeFunctionAndMethod[0]}",
+                //         $makeFunctionAndMethod[1]
+                //     ],
+                //     [
+                //         $job->payload['user_id']
+                //     ]
+                // );
+
+                // echo "Job Payload \n";
+                // print_r($job->payload);
+                // echo json_encode($job->payload);
+                // echo "\n";
+                // echo "Deleting Job.. \n";
                 $job->delete();
             } else {
                 echo 'No Jobs!';

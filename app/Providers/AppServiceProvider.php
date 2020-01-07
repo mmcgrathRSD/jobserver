@@ -2,13 +2,15 @@
 
 namespace App\Providers;
 
-use App\Services\BeanStalkWorkerService;
-use App\Services\QueueTaskService;
-use Illuminate\Support\ServiceProvider;
 use Popcorn\Beans\Consumer;
-use Popcorn\Beans\Models\QueueTask;
 use Popcorn\Beans\Producer;
+use App\Services\UserService;
+use Popcorn\Beans\Models\User;
+use App\Services\QueueTaskService;
+use Popcorn\Beans\Models\QueueTask;
 use xobotyi\beansclient\Connection;
+use Illuminate\Support\ServiceProvider;
+use App\Services\BeanStalkWorkerService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(QueueTaskService::class, function () {
             return new QueueTaskService(
                 new QueueTask([
+                    'host'      => getenv('MONGOHOST'),
+                    'database'  => getenv('MONGODATABASE'),
+                    'username'  => getenv('MONGOUSER'),
+                    'password'  => getenv('MONGOPASSWORD'),
+                ]),
+                new Producer(
+                    new Connection('127.0.0.1', 11300, 2, true)
+                ),
+            );
+        });
+
+        $this->app->bind(UserService::class, function () {
+            return new UserService(
+                new User([
                     'host'      => getenv('MONGOHOST'),
                     'database'  => getenv('MONGODATABASE'),
                     'username'  => getenv('MONGOUSER'),
